@@ -264,9 +264,11 @@ cpp_int encode_pkcs(cpp_int x, cpp_int n) {
     unsigned int lengthX = msb(x);
     unsigned int lengthN = msb(n);
     if (lengthX <= lengthN - 11) {
-        unsigned int lengthR = (lengthN/8 - lengthX/8 - 3);
+        unsigned int lengthR = (lengthN - lengthX - 16);
+        string randomBits = generateBinaryString(lengthR);
+        //cout << "randomBits (size" << lengthR << "): " << randomBits << "\n";
 
-        string encodedX = "00000010" + generateBinaryString(lengthR) + "0000" + toBinary(x);
+        string encodedX = "00000010" + randomBits + "0000" + toBinary(x);
 
         return binaryToDecimal(encodedX);
     }
@@ -279,22 +281,31 @@ cpp_int encode_pkcs(cpp_int x, cpp_int n) {
 cpp_int decode_pkcs(cpp_int c, cpp_int n) {
     unsigned int lengthC = msb(c);
     unsigned int lengthN = msb(n);
-    if (lengthC < lengthN) {
+    if (lengthC <= lengthN) {
         string binaryString = toBinary(c);
 
-        int i = 8;
+        unsigned int i = 8;
         //Find how many bits before the 4 zeros
         int count = 0;
         while (i < lengthN) {
             if (binaryString[i] == '0') {
                 count++;
             }
+            else {
+                count = 0;
+            }
             if (count == 4) {
                 break;
             }
+            i++;
         }
+        //cout << "i = " << i << "\n";
         string decoded = binaryString.substr(i);
         return binaryToDecimal(decoded);
+    }
+    else {
+        cout << "Error in decode_pkcs \n";
+        return 0;
     }
 }
 
@@ -338,7 +349,7 @@ cpp_int binaryToDecimal(string binaryString) {
     // Initializing base value to 1, i.e 2^0
     cpp_int base = 1;
 
-    size_t i = b.length();
+    size_t i = b.length() - 1;
     while (i > 0) {
         char last_bit = b[i];
         i--;
@@ -372,6 +383,9 @@ string generateBinaryString(int n) {
     for (int i = 0; i < n; i++) {
         if (s[i] == '0') {
             count++;
+        }
+        else {
+            count = 0;
         }
         if (count == 4) {
             s[i] = '1';
