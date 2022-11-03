@@ -8,22 +8,23 @@ using namespace std;
 #include <string>
 #include <cstring>
 #include <boost/multiprecision/cpp_int.hpp>
+using namespace boost::multiprecision;
 
 //Function to find gcd(a,b) - from GeeksForGeeks
-int gcd(int a, int b);
+int1024_t gcd(int1024_t a, int1024_t b);
 
 // Function for extended Euclidean Algorithm - from GeeksForGeeks
-int gcdExtended(int a, int b, int* x, int* y);
+int1024_t gcdExtended(int1024_t a, int1024_t b, int1024_t* x, int1024_t* y);
 
 // Function to find modulo inverse of a - from GeeksForGeeks
-int modInverse(int A, int M);
+int1024_t modInverse(int1024_t A, int1024_t M);
 
-int encrypt(int x, int e, int n);
+int1024_t encrypt(int1024_t x, int1024_t e, int1024_t n);
 
-int decrypt(int c, int d, int n);
+int1024_t decrypt(int1024_t c, int1024_t d, int1024_t n);
 
 //Iterative Function to calculate (x^y)%p in O(log y) - from GeeksForGeeks
-int powerMod(long long x, unsigned int y, int p);
+int1024_t powerMod(int1024_t x, int1024_t y, int1024_t p);
 
 int main()
 {
@@ -34,7 +35,7 @@ int main()
     cin >> inputpqefilename;
 
     //Read p,q,e from the file
-    int p, q, e;
+    int1024_t p, q, e;
 
     ifstream inputpqefile(inputpqefilename);
     if (inputpqefile) {
@@ -58,12 +59,12 @@ int main()
         return 0;
     }
 
-    int phi = 0;
+    int1024_t phi = 0;
     phi = (p - 1) * (q - 1);
     cout << "phi = " << phi << "\n";
 
     //Increments e until e is relative prime to phi
-    int track;
+    int1024_t track;
     while (e < phi) {
         track = gcd(e, phi);
         if (track == 1)
@@ -77,7 +78,7 @@ int main()
     cin >> outputNdfilename;
 
     //calculate d and N and store in the output file
-    int n = 0, d = 0;
+    int1024_t n = 0, d = 0;
     n = p * q;
     d = modInverse(e, phi);
 
@@ -98,7 +99,7 @@ int main()
     string inputxfilename;
     cin >> inputxfilename;
 
-    int x = 0;
+    int1024_t x = 0;
     ifstream inputxfile(inputxfilename);
     if (inputxfile.is_open()) {
         string drop;
@@ -121,7 +122,7 @@ int main()
     cin >> outputEfilename;
 
     //caluate E(x) and store in the ouput file
-    int ex = 0;
+    int1024_t ex = 0;
     ex = encrypt(x, e, n);
 
     cout << "E(x) = " << ex << "\n";
@@ -140,7 +141,7 @@ int main()
     string inputcfilename;
     cin >> inputcfilename;
 
-    int c = 0;
+    int1024_t c = 0;
     ifstream inputcfile(inputcfilename);
     if (inputcfile.is_open()) {
         string drop;
@@ -163,7 +164,7 @@ int main()
     cin >> outputDfilename;
 
     //calculate D(c) and store in the output file
-    int dc = 0;
+    int1024_t dc = 0;
     dc = decrypt(c, d, n);
 
     cout << "D(c) = " << dc << "\n";
@@ -180,8 +181,8 @@ int main()
 
 }
 
-int gcd(int a, int b) {
-    int t;
+int1024_t gcd(int1024_t a, int1024_t b) {
+    int1024_t t;
     while (1) {
         t = a % b;
         if (t == 0)
@@ -191,24 +192,21 @@ int gcd(int a, int b) {
     }
 }
 
-int modInverse(int A, int M)
-{
-    int x, y;
-    int g = gcdExtended(A, M, &x, &y);
+int1024_t modInverse(int1024_t A, int1024_t M) {
+    int1024_t x, y;
+    int1024_t g = gcdExtended(A, M, &x, &y);
     if (g != 1) {
         cout << "Inverse doesn't exist";
         return 0;
     }
     else {
         // m is added to handle negative x
-        int res = (x % M + M) % M;
+        int1024_t res = (x % M + M) % M;
         return res;
     }
 }
 
-int gcdExtended(int a, int b, int* x, int* y)
-{
-
+int1024_t gcdExtended(int1024_t a, int1024_t b, int1024_t* x, int1024_t* y) {
     // Base Case
     if (a == 0) {
         *x = 0, * y = 1;
@@ -216,8 +214,8 @@ int gcdExtended(int a, int b, int* x, int* y)
     }
 
     // To store results of recursive call
-    int x1, y1;
-    int gcd = gcdExtended(b % a, a, &x1, &y1);
+    int1024_t x1, y1;
+    int1024_t gcd = gcdExtended(b % a, a, &x1, &y1);
 
     // Update x and y using results of recursive
     // call
@@ -227,17 +225,17 @@ int gcdExtended(int a, int b, int* x, int* y)
     return gcd;
 }
 
-int encrypt(int x, int e, int n) {
-    return (int)powerMod(x, e, n);
+int1024_t encrypt(int1024_t x, int1024_t e, int1024_t n) {
+    return (int1024_t)powerMod(x, e, n);
 }
 
-int decrypt(int c, int d, int n) {
-    return (int)powerMod(c, d, n);
+int1024_t decrypt(int1024_t c, int1024_t d, int1024_t n) {
+    return (int1024_t)powerMod(c, d, n);
 }
 
-int powerMod(long long x, unsigned int y, int p)
+int1024_t powerMod(int1024_t x, int1024_t y, int1024_t p)
 {
-    int res = 1;     // Initialize result
+    int1024_t res = 1;     // Initialize result
 
     x = x % p; // Update x if it is more than or
     // equal to p
